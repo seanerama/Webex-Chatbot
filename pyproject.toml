@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "webex-presales-assistant"
+version = "0.1.0"
+description = "A Webex Teams chatbot AI assistant for presales engineers"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    { name = "Sean Mahoney" }
+]
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "webexteamssdk>=1.6.1",
+    "httpx>=0.26.0",
+    "structlog>=24.1.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "anthropic>=0.40.0",
+    "openai>=1.10.0",
+    "google-generativeai>=0.8.0",
+    "ollama>=0.4.0",
+    "mcp>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+    "httpx>=0.26.0",
+]
+
+[project.scripts]
+start = "uvicorn app.main:app --reload"
+setup-webhook = "python scripts/setup_webhook.py"
+test-providers = "python scripts/test_providers.py"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.isort]
+known-first-party = ["app"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --cov=app --cov-report=term-missing"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
