@@ -148,7 +148,19 @@ class WebexService:
         text: str | None = None,
         markdown: str | None = None,
     ) -> None:
-        """Update an existing message (for streaming updates)."""
+        """Update an existing message (for streaming updates).
+
+        Note: Message editing may not be available in all SDK versions.
+        """
+        # Check if update method exists in SDK
+        if not hasattr(self._api.messages, "update"):
+            logger.debug(
+                "message_update_skipped",
+                message_id=message_id,
+                reason="SDK does not support message updates",
+            )
+            return
+
         try:
             kwargs: dict[str, Any] = {
                 "messageId": message_id,
@@ -163,7 +175,7 @@ class WebexService:
 
             logger.debug(LogEvents.WEBEX_MESSAGE_UPDATED, message_id=message_id)
 
-        except ApiError as e:
+        except (ApiError, AttributeError) as e:
             # Don't raise - update failures are non-critical for streaming
             logger.warning(
                 "message_update_failed",

@@ -17,6 +17,7 @@ An AI-powered Webex Teams chatbot that assists presales engineers with networkin
 ### Prerequisites
 
 - Python 3.11+
+- [uv](https://docs.astral.sh/uv/) (fast Python package manager)
 - A Webex Bot account (create at [developer.webex.com](https://developer.webex.com))
 - At least one LLM provider API key (or Ollama for local)
 - ngrok (for local development)
@@ -24,16 +25,20 @@ An AI-powered Webex Teams chatbot that assists presales engineers with networkin
 ### Installation
 
 ```bash
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
 # Clone the repository
 git clone https://github.com/seanerama/Webex-Chatbot.git
 cd Webex-Chatbot
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Create virtual environment and install dependencies
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+uv pip install -e ".[dev]"
 
-# Install dependencies
-pip install -e ".[dev]"
+# Or use uv sync (if using uv.lock)
+uv sync --dev
 
 # Copy environment template
 cp .env.example .env
@@ -63,12 +68,12 @@ GEMINI_API_KEY=...
 ngrok http 8000
 
 # In another terminal, set up webhook
-python scripts/setup_webhook.py setup https://your-ngrok-url.ngrok.io/webhook
+uv run python scripts/setup_webhook.py setup https://your-ngrok-url.ngrok.io/webhook
 
 # Run the bot
-python -m app.main
+uv run python -m app.main
 # or
-uvicorn app.main:app --reload
+uv run uvicorn app.main:app --reload
 ```
 
 ## Usage
@@ -147,16 +152,22 @@ Create `users.json` to configure per-user settings:
 
 ```bash
 # Run tests
-pytest
+uv run pytest
 
 # Type checking
-mypy app
+uv run mypy app
 
 # Linting
-ruff check app
+uv run ruff check app
 
 # Format code
-ruff format app
+uv run ruff format app
+
+# Test LLM providers
+uv run python scripts/test_providers.py
+
+# Test specific provider
+uv run python scripts/test_providers.py -p anthropic --chat
 ```
 
 ## License

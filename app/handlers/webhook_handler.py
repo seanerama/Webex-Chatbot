@@ -104,7 +104,7 @@ class WebhookHandler:
             LogEvents.WEBHOOK_RECEIVED,
             webhook_id=payload.id,
             resource=payload.resource.value,
-            event=payload.event.value,
+            webhook_event=payload.event.value,
             actor_email=payload.data.person_email,
         )
 
